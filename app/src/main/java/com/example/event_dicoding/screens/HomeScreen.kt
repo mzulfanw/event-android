@@ -48,8 +48,8 @@ fun HomeScreen(
                     Text(
                         when (currentRoute) {
                             BottomNavItem.Home.route -> "Dicoding Events"
-                            BottomNavItem.Upcoming.route -> "Upcoming"
-                            else -> "Finished"
+                            BottomNavItem.Upcoming.route -> "Acara yang akan datang"
+                            else -> "Acara yang telah selesai"
                         },
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.ExtraBold
