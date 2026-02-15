@@ -23,12 +23,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.text.HtmlCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import com.example.event_dicoding.R
 import com.example.event_dicoding.ui.components.ErrorState
 import com.example.event_dicoding.ui.detail.DetailViewModel
 import com.example.event_dicoding.ui.detail.DetailViewModelFactory
@@ -83,7 +85,11 @@ fun DetailScreen(
                         shape = RoundedCornerShape(16.dp),
                         elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
                     ) {
-                        Text("Daftar Sekarang", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                        Text(
+                            text = stringResource(id = R.string.register_now),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp
+                        )
                     }
                 }
             }
@@ -203,12 +209,21 @@ fun DetailScreen(
 }
 
 @Composable
-fun InfoRow(icon: androidx.compose.ui.graphics.vector.ImageVector, text: String) {
+fun InfoRow(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    text: String,
+    modifier: Modifier = Modifier
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(vertical = 4.dp)
+        modifier = modifier.padding(vertical = 4.dp)
     ) {
-        Icon(icon, contentDescription = null, modifier = Modifier.size(20.dp), tint = MaterialTheme.colorScheme.secondary)
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.size(20.dp),
+            tint = MaterialTheme.colorScheme.secondary
+        )
         Spacer(modifier = Modifier.width(8.dp))
         Text(text, style = MaterialTheme.typography.bodyMedium)
     }
