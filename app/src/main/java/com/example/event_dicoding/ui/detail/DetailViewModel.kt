@@ -2,7 +2,8 @@ package com.example.event_dicoding.ui.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.event_dicoding.domain.usecase.GetEventDetailUseCase
+import com.example.event_dicoding.domain.model.Event
+import com.example.event_dicoding.domain.repository.EventRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -11,15 +12,18 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 class DetailViewModel(
-    private val getEventDetailUseCase: GetEventDetailUseCase
+    private val repository: EventRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DetailUiState())
     val uiState: StateFlow<DetailUiState> = _uiState.asStateFlow()
 
+    private val _isFavorite = MutableStateFlow(false)
+    val isFavorite: StateFlow<Boolean> = _isFavorite.asStateFlow()
+
     fun getEventDetail(id: Int) {
         viewModelScope.launch {
-            getEventDetailUseCase(id)
+            repository.getEventDetail(id)
                 .onStart {
                     _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
                 }
@@ -34,7 +38,26 @@ class DetailViewModel(
                         isLoading = false,
                         event = event
                     )
+                    checkFavoriteStatus(id)
                 }
+        }
+    }
+
+    private fun checkFavoriteStatus(id: Int) {
+        viewModelScope.launch {
+            repository.isFavorite(id).collect {
+                _isFavorite.value = it
+            }
+        }
+    }
+
+    fun toggleFavorite(event: Event) {
+        viewModelScope.launch {
+            if (_isFavorite.value) {
+                repository.deleteFavorite(event)
+            } else {
+                repository.insertFavorite(event)
+            }
         }
     }
 }

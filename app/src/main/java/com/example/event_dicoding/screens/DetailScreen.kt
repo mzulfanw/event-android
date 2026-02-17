@@ -11,6 +11,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
@@ -21,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -31,6 +34,9 @@ import androidx.core.text.HtmlCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.event_dicoding.R
+import com.example.event_dicoding.data.local.room.AppDatabase
+import com.example.event_dicoding.data.remote.retrofit.ApiConfig
+import com.example.event_dicoding.data.repository.EventRepositoryImpl
 import com.example.event_dicoding.ui.components.ErrorState
 import com.example.event_dicoding.ui.detail.DetailViewModel
 import com.example.event_dicoding.ui.detail.DetailViewModelFactory
@@ -40,10 +46,15 @@ import com.example.event_dicoding.ui.detail.DetailViewModelFactory
 fun DetailScreen(
     eventId: Int,
     navigateBack: () -> Unit,
-    viewModel: DetailViewModel = viewModel(factory = DetailViewModelFactory())
 ) {
-    val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
+    val apiService = ApiConfig.getApiService()
+    val database = AppDatabase.getInstance(context)
+    val repository = EventRepositoryImpl(apiService, database.favoriteEventDao())
+    val viewModel: DetailViewModel = viewModel(factory = DetailViewModelFactory(repository))
+    
+    val uiState by viewModel.uiState.collectAsState()
+    val isFavorite by viewModel.isFavorite.collectAsState()
 
     LaunchedEffect(eventId) {
         viewModel.getEventDetail(eventId)
@@ -61,6 +72,17 @@ fun DetailScreen(
                             .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.5f), CircleShape)
                     ) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                },
+                actions = {
+                    if (uiState.event != null) {
+                        IconButton(onClick = { viewModel.toggleFavorite(uiState.event!!) }) {
+                            Icon(
+                                imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                contentDescription = "Favorite",
+                                tint = if (isFavorite) Color.Red else MaterialTheme.colorScheme.onSurface
+                            )
+                        }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
@@ -153,16 +175,15 @@ fun DetailScreen(
                             
                             Spacer(modifier = Modifier.height(24.dp))
                             
-                            // Info Card
                             Surface(
                                 modifier = Modifier.fillMaxWidth(),
                                 shape = RoundedCornerShape(16.dp),
                                 color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
                             ) {
                                 Column(modifier = Modifier.padding(16.dp)) {
-                                    InfoRow(Icons.Default.Person, event.ownerName)
-                                    InfoRow(Icons.Default.DateRange, event.beginTime)
-                                    InfoRow(Icons.Default.LocationOn, event.cityName)
+                                    InfoRow(icon = Icons.Default.Person, text = event.ownerName)
+                                    InfoRow(icon = Icons.Default.DateRange, text = event.beginTime)
+                                    InfoRow(icon = Icons.Default.LocationOn, text = event.cityName)
                                     
                                     val quotaSisa = event.quota - event.registrants
                                     Row(

@@ -8,4 +8,9 @@ interface EventRepository {
     fun getFinishedEvents(): Flow<List<Event>>
     fun searchEvents(query: String): Flow<List<Event>>
     fun getEventDetail(id: Int): Flow<Event>
+
+    fun getAllFavoriteEvents(): Flow<List<Event>>
+    fun isFavorite(id: Int): Flow<Boolean>
+    suspend fun insertFavorite(event: Event)
+    suspend fun deleteFavorite(event: Event)
 }

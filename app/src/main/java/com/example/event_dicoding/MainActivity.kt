@@ -12,12 +12,18 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.event_dicoding.data.local.SettingPreferences
+import com.example.event_dicoding.data.local.dataStore
 import com.example.event_dicoding.navigation.AppNavGraph
 import com.example.event_dicoding.navigation.BottomNavItem
+import com.example.event_dicoding.ui.setting.SettingViewModel
+import com.example.event_dicoding.ui.setting.SettingViewModelFactory
 import com.example.event_dicoding.ui.theme.EventdicodingTheme
 
 class MainActivity : ComponentActivity() {
@@ -25,7 +31,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            EventdicodingTheme {
+            val pref = SettingPreferences.getInstance(dataStore)
+            val settingViewModel: SettingViewModel = viewModel(
+                factory = SettingViewModelFactory(pref)
+            )
+            val isDarkMode by settingViewModel.getThemeSettings().collectAsState(initial = false)
+
+            EventdicodingTheme(darkTheme = isDarkMode) {
                 App()
             }
         }
@@ -38,7 +50,9 @@ private fun App() {
     val items = listOf(
         BottomNavItem.Home,
         BottomNavItem.Upcoming,
-        BottomNavItem.Finished
+        BottomNavItem.Finished,
+        BottomNavItem.Favorite,
+        BottomNavItem.Setting
     )
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()

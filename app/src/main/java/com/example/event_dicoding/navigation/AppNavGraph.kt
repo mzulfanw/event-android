@@ -8,7 +8,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.event_dicoding.screens.DetailScreen
+import com.example.event_dicoding.screens.FavoriteScreen
 import com.example.event_dicoding.screens.HomeScreen
+import com.example.event_dicoding.screens.SettingScreen
 
 @Composable
 fun AppNavGraph(
@@ -43,6 +45,16 @@ fun AppNavGraph(
                     navController.navigate("detail/$eventId")
                 }
             )
+        }
+        composable(BottomNavItem.Favorite.route) {
+            FavoriteScreen(
+                navigateToDetail = { eventId ->
+                    navController.navigate("detail/$eventId")
+                }
+            )
+        }
+        composable(BottomNavItem.Setting.route) {
+            SettingScreen()
         }
         composable(
             route = "detail/{eventId}",

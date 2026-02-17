@@ -1,14 +1,14 @@
-package com.example.event_dicoding.ui.detail
+package com.example.event_dicoding.ui.favorite
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.event_dicoding.domain.repository.EventRepository
 
-class DetailViewModelFactory(private val repository: EventRepository) : ViewModelProvider.Factory {
+class FavoriteViewModelFactory(private val repository: EventRepository) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(DetailViewModel::class.java)) {
-            return DetailViewModel(repository) as T
+        if (modelClass.isAssignableFrom(FavoriteViewModel::class.java)) {
+            return FavoriteViewModel(repository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

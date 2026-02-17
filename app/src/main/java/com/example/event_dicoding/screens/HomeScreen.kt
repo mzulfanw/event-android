@@ -16,9 +16,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.event_dicoding.data.local.room.AppDatabase
+import com.example.event_dicoding.data.remote.retrofit.ApiConfig
+import com.example.event_dicoding.data.repository.EventRepositoryImpl
 import com.example.event_dicoding.domain.model.Event
 import com.example.event_dicoding.navigation.BottomNavItem
 import com.example.event_dicoding.ui.components.ErrorState
@@ -31,9 +35,14 @@ import com.example.event_dicoding.ui.home.HomeViewModelFactory
 fun HomeScreen(
     currentRoute: String,
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel = viewModel(factory = HomeViewModelFactory()),
     navigateToDetail: (Int) -> Unit
 ) {
+    val context = LocalContext.current
+    val apiService = ApiConfig.getApiService()
+    val database = AppDatabase.getInstance(context)
+    val repository = EventRepositoryImpl(apiService, database.favoriteEventDao())
+    val viewModel: HomeViewModel = viewModel(factory = HomeViewModelFactory(repository))
+    
     val uiState by viewModel.uiState.collectAsState()
     var query by rememberSaveable { mutableStateOf("") }
 
