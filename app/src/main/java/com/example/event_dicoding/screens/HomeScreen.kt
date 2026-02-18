@@ -56,7 +56,7 @@ fun HomeScreen(
                 title = {
                     Text(
                         when (currentRoute) {
-                            BottomNavItem.Home.route -> "Dicoding Events"
+                            BottomNavItem.Home.route -> "Acara Dicoding"
                             BottomNavItem.Upcoming.route -> "Acara yang akan datang"
                             else -> "Acara yang telah selesai"
                         },
