@@ -8,7 +8,9 @@ data class FavoriteEvent(
     @PrimaryKey(autoGenerate = false)
     val id: Int,
     val name: String,
+    val imageLogo: String,
     val mediaCover: String,
+    val category: String,
     val cityName: String,
     val beginTime: String
 )

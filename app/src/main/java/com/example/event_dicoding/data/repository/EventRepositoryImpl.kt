@@ -40,9 +40,9 @@ class EventRepositoryImpl(
             name = it.name,
             summary = "",
             description = "",
-            imageLogo = "",
+            imageLogo = it.imageLogo,
             mediaCover = it.mediaCover,
-            category = "",
+            category = it.category,
             ownerName = "",
             cityName = it.cityName,
             quota = 0,
@@ -57,7 +57,9 @@ class EventRepositoryImpl(
         return FavoriteEventEntity(
             id = it.id,
             name = it.name,
+            imageLogo = it.imageLogo,
             mediaCover = it.mediaCover,
+            category = it.category,
             cityName = it.cityName,
             beginTime = it.beginTime
         )
